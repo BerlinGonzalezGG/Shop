@@ -1,0 +1,1009 @@
+																																																									/*
+ _____                                                                        _____ 
+( ___ )                                                                      ( ___ )
+ |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | 
+ |   |  ____    __       _____   ____    ______   _____   __  __  ____        |   | 
+ |   | /\  _`\ /\ \     /\  __`\/\  _`\ /\__  _\ /\  __`\/\ \/\ \/\  _`\      |   | 
+ |   | \ \ \L\_\ \ \    \ \ \/\ \ \ \L\ \/_/\ \/ \ \ \/\ \ \ \ \ \ \,\L\_\    |   | 
+ |   |  \ \ \L_L\ \ \  __\ \ \ \ \ \ ,  /  \ \ \  \ \ \ \ \ \ \ \ \/_\__ \    |   | 
+ |   |   \ \ \/, \ \ \L\ \\ \ \_\ \ \ \\ \  \_\ \__\ \ \_\ \ \ \_\ \/\ \L\ \  |   | 
+ |   |    \ \____/\ \____/ \ \_____\ \_\ \_\/\_____\\ \_____\ \_____\ `\____\ |   | 
+ |   |     \/___/  \/___/   \/_____/\/_/\/ /\/_____/ \/_____/\/_____/\/_____/ |   | 
+ |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+(_____)                                                                      (_____)
+																																																									*/
+																																																									/*
+!! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !!
+
+If you need any help at all with the script, join the Discord: https://discord.gg/berlingonzalezshop
+
+!! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !! | !! IMPORTANT - PLEASE READ !!
+																																																									*/
+																																																									
+const string ALL = "Every Profiles"; const string OFF = "OFF" const string ON = "ON" const string SAVE = "SAVED" const string MUTE = "Script OFF" const string HOLD = "Double  CIRCLE/B" const string ACTIVE = "To Turn ON"
+define UP = 131; define DOWN = 132; define LEFT = 133; define RIGHT = 134; define TRIANGLE = 130; define Y = 89; define CROSS = 127; define A = 65; int Plasma = 200, ButtonLeft; int ButtonRight; define LX = PS4_LX define LY = PS4_LY int stringLength; int AntiRecoilFunction int CurrentInfo = 0 int ButtonTime = 11, EditAssistDelay = 20, LV12, BuildTrack, BuildCount, BuildSyncTime = 2000, LV38, LV39, LV40, LV41, LV42 = 3, LV43 = 6, Edit1, Edit2, EditT, EditAssist  = FALSE,EditHold  = FALSE, EditHoldTime  = 100
+const string PROFILE[] = {"Profile 1", "Profile 2"}
+const string INFO_MENU_PS[] = {"Switch Profile:", "Tap TRIANGLE", "Switch Mod:", "Tap LEFT or RIGHT", "Toggle ON/OFF:", "Tap UP or DOWN", "Close Menu:", "Hold L2 +", "Tap OPTION", "Save and Exit:", "Tap PS"}
+const string INFO_MENU_XB[] = {"Close Menu:", "Hold LT + MENU", "Save and Exit:", "Tap XBOX"}
+const string MODNAME[] = {"Auto-Track", "Pickup-Macro", "Instant-Reset", "Anti-Recoil", "Head-Lock", "H-Abuse", "Aim-Assist", "Bloom-Reducer", "S-Track", "DropShot", "BuildTracker", "NoVibration", "OverClock"}
+define AutoTrackMod = 0, PickupMacroMod = 1, InstantResetMod = 2, AntiRecoilMod = 3, HeadLockMod = 4, HipfireAbuseMod = 5, AimAssistMod = 6, BloomReducerMod = 7, SlideTrackingMod = 8, DropShotMod = 9, BuildTrackerMod = 10, NoVibrationMod = 11, OverClockMod = 12
+int ModName
+int AutoTrackToggle[3] int PickupMacroToggle[3] int InstantResetToggle[3] int AntiRecoilToggle[3] int HeadLockToggle[3] int HipfireAbuseToggle[3] int AimAssistToggle[3] int BloomReducerToggle[3] int SlideTrackingToggle[3] int Ignore1Toggle[3] int DropShotToggle[3] int Ignore2Toggle[3] int BuildTrackerToggle[3] int NoVibrationToggle[3] int Ignore3Toggle[3] int Ignore4Toggle[3] int OverClockToggle[3] int Ignore5Toggle[3]
+define Toggles = 13
+int i
+int display_title = TRUE int display_new int display_info int display_black int screensaver int ModMenu int KillSwitch int count_black int info_timer int profile_idx int logo_on
+
+																																																									/*
+Support:
+https://discord.gg/berlingonzalezshop
+
+First, let's set up your binds to match the ones you use in-game. If you need a list of binds, check the FAQ section on our Discord!											
+
+Combat mode binds, they're mostly default, so if you don't know yours, leave them!
+																																																									*/
+																																																									int
+Fire 		= PS5_R2,
+ADS 		= PS5_L2,
+Interact 	= PS5_SQUARE,
+Pickaxe  	= PS5_TRIANGLE,
+Crouch  	= PS5_R3,
+
+																																																									/*
+Edit mode binds, most people change these around, but we've put the most common as the default!
+																																																									*/
+
+Edit  		= PS5_L3,
+Confirm  	= PS5_CIRCLE,
+Reset 		= PS5_L3,
+Select  	= PS5_R2,
+
+																																																									/*
+Build mode binds. These are also pretty common, probably nothing to change!
+																																																									*/
+
+SwitchMode  = PS5_CIRCLE,
+Wall  		= PS5_R2,
+Stair  		= PS5_L2,
+Floor  		= PS5_R1,
+Cone  		= PS5_L1,
+
+																																																									/*
+   _   ___ __  __     _   ___ ___ ___ ___ _____ 
+  /_\ |_ _|  \/  |   /_\ / __/ __|_ _/ __|_   _|
+ / _ \ | || |\/| |  / _ \\__ \__ \| |\__ \ | |  
+/_/ \_\___|_|  |_| /_/ \_\___/___/___|___/ |_|  
+                                                 
+																																																									*/
+// GLORIOUS AIM ASSIST
+Power  		= -8, // I recommend keeping the values close to your deadzones, but feel free to choose what works best for you.
+// If you are LINEAR set this to -1 of what your right stick deadzone is in your game (So if your deadzone is 5 put the value at 4)
+// If you are EXPO set this to +3 of what your right stick deadzone is in your game (So if your deadzone is 5 put the value at 8)
+
+PowerHold	= PS5_PS,
+
+// Controller / KBM Overclock
+Speed  		= -9,
+// Set speed to -9 for lowest input delay. If there are any issues, change it to -5.
+																																																									/*
+ __  __ ___ ___  ___   ____  __   _   ___ ___  ___  ___ 
+|  \/  |_ _/ __|/ __| / /  \/  | /_\ / __| _ \/ _ \/ __|
+| |\/| || |\__ \ (__ / /| |\/| |/ _ \ (__|   / (_) \__ \
+|_|  |_|___|___/\___/_/ |_|  |_/_/ \_\___|_|_\\___/|___/
+																																																									*/
+
+// ANTI RECOIL (NOTE: ONLY REALLY RECOMMENDED FOR ZERO-BUILD PLAYERS)
+AntiRecoilPower 	= 20,
+// I recommend using values between 15-25, but feel free to choose what works best for you.
+
+// DROPSHOT (NOTE: ONLY REALLY RECOMMENDED FOR ZERO-BUILD PLAYERS)
+DropShotDelay	    = 40, // Test and see what value works best for you!
+// Decrease the value = Faster
+// Increase the value = Slower
+
+// PICKUP MACRO
+PickupPress  = PS5_R1,
+// Set this to a bind you can press easily with your pick up button. You need to hold both to use the pick up macro.
+
+// INSTANT RESET (NOTE: IGNORE IF YOU PLAY ZERO BUILD)
+InstantReset = PS5_DOWN,
+// Set this to a bind you donâ€™t use in Fortnite (most people use their emote bind, like down on the D-pad)
+
+
+
+
+
+
+
+
+
+
+
+
+
+																																																									/*
+  ___ ___ _  _  ___  ___ ___   ___ ___ _    _____      __
+ |_ _/ __| \| |/ _ \| _ \ __| | _ ) __| |  / _ \ \    / /
+  | | (_ | .` | (_) |   / _|  | _ \ _|| |_| (_) \ \/\/ / 
+ |___\___|_|\_|\___/|_|_\___| |___/___|____\___/ \_/\_/  
+																																																									*/
+
+// IGNORE BELOW
+Ignore2Delay = 80,
+Ignore5Delay = 40,
+Ignore6  = XB1_A,
+Ignore7 = 80,
+Ignore3Press = XB1_X
+
+
+
+init {
+AutoTrackToggle[0] = get_pvar(SPVAR_1, 0, 2, 0)
+PickupMacroToggle[0] = get_pvar(SPVAR_2, 0, 1, 0)
+InstantResetToggle[0] = get_pvar(SPVAR_3, 0, 1, 0)
+AntiRecoilToggle[0] = get_pvar(SPVAR_4, 0, 1, 0)
+HeadLockToggle[0] = get_pvar(SPVAR_5, 0, 1, 0)
+HipfireAbuseToggle[0] = get_pvar(SPVAR_6, 0, 1, 0)
+AimAssistToggle[0] = get_pvar(SPVAR_7, 0, 1, 0)
+BloomReducerToggle[0] = get_pvar(SPVAR_8, 0, 1, 0)
+SlideTrackingToggle[0] = get_pvar(SPVAR_9, 0, 1, 0)
+Ignore1Toggle[0] = get_pvar(SPVAR_10, 0, 1, 0)
+DropShotToggle[0] = get_pvar(SPVAR_11, 0, 1, 0)
+Ignore2Toggle[0] = get_pvar(SPVAR_12, 0, 1, 0)
+BuildTrackerToggle[0] = get_pvar(SPVAR_13, 0, 1, 0)
+NoVibrationToggle[0] = get_pvar(SPVAR_14, 0, 1, 0)
+Ignore3Toggle[0] = get_pvar(SPVAR_15, 0, 1, 0)
+Ignore4Toggle[0] = get_pvar(SPVAR_16, 0, 1, 0)
+OverClockToggle[0] = get_pvar(SPVAR_17, 0, 1, 0)
+Ignore5Toggle[0] = get_pvar(SPVAR_18, 0, 1, 0)
+
+AutoTrackToggle[1] = get_pvar(SPVAR_19, 0, 2, 0)
+PickupMacroToggle[1] = get_pvar(SPVAR_20, 0, 1, 0)
+InstantResetToggle[1] = get_pvar(SPVAR_21, 0, 1, 0)
+AntiRecoilToggle[1] = get_pvar(SPVAR_22, 0, 1, 0)
+HeadLockToggle[1] = get_pvar(SPVAR_23, 0, 1, 0)
+HipfireAbuseToggle[1] = get_pvar(SPVAR_24, 0, 1, 0)
+AimAssistToggle[1] = get_pvar(SPVAR_25, 0, 1, 0)
+BloomReducerToggle[1] = get_pvar(SPVAR_26, 0, 1, 0)
+SlideTrackingToggle[1] = get_pvar(SPVAR_27, 0, 1, 0)
+Ignore1Toggle[1] = get_pvar(SPVAR_28, 0, 1, 0)
+DropShotToggle[1] = get_pvar(SPVAR_29, 0, 1, 0)
+Ignore2Toggle[1] = get_pvar(SPVAR_30, 0, 1, 0)
+BuildTrackerToggle[1] = get_pvar(SPVAR_31, 0, 1, 0)
+NoVibrationToggle[1] = get_pvar(SPVAR_32, 0, 1, 0)
+Ignore3Toggle[1] = get_pvar(SPVAR_33, 0, 1, 0)
+Ignore4Toggle[1] = get_pvar(SPVAR_34, 0, 1, 0)
+OverClockToggle[1] = get_pvar(SPVAR_35, 0, 1, 0)
+Ignore5Toggle[1] = get_pvar(SPVAR_36, 0, 1, 0)
+}
+
+main {
+vm_tctrl(Speed);
+set_val(TRACE_1, profile_idx)
+set_val(TRACE_2, ModName)
+if (get_ival (PowerHold) && get_ptime (PowerHold) > 350) { 
+Disable(); 
+Power = ValueChangeAA(Power, PS5_LEFT, -1); 
+Power = ValueChangeAA(Power, PS5_RIGHT, 1); 
+Power = ValueChangeAA(Power, PS5_DOWN, -10); 
+Power = ValueChangeAA(Power, PS5_UP, 10); }
+if(get_controller() != PIO_PS4) {
+if(get_console() == PIO_PS4) { 
+if(get_ival(PS4_SHARE)) {
+if(get_ival(PS4_R3)) {
+set_val(PS4_SHARE, 100)
+set_val(PS4_TOUCH, 0)
+set_val(PS4_R3, 0)
+} else {
+set_val(PS4_TOUCH, 100)
+set_val(PS4_SHARE, 0)
+}
+}
+}
+}
+if(!ModMenu) {
+if((get_ival(PS4_L2) && event_press(PS4_SHARE)) || (!get_ival(PS4_L2) && event_press(PS4_PS))) {			
+KillSwitch = !KillSwitch
+if(KillSwitch) 
+combo_run(RUMBLE_OFF)
+else {
+combo_run(RUMBLE_ON)
+display_title = TRUE	
+}
+}
+if(KillSwitch) {
+screensaver = FALSE
+count_black = 0
+logo_on = FALSE
+if(event_press(PS4_CIRCLE) && get_brtime(PS4_CIRCLE) < 200) {
+KillSwitch = FALSE
+combo_run(RUMBLE_ON)
+display_title = TRUE
+}
+combo_run(KILLSWITCH)
+} else 
+combo_stop(KILLSWITCH)
+if(get_ival(PS4_L2)) {
+if(get_controller() != PIO_PS4) 
+set_val(PS4_TOUCH, 0)
+else
+set_val(PS4_SHARE, 0)
+}
+}
+if(!KillSwitch) {
+if(get_ival(PS4_L2)) {	
+if(event_release(PS4_OPTIONS)) {
+cls_oled(OLED_BLACK)
+logo_on = FALSE
+ModMenu = !ModMenu
+if(!ModMenu) {
+combo_run(RUMBLE_OFF)
+display_title = TRUE
+}
+if(ModMenu) {
+ModName = AutoTrackMod
+CurrentInfo = 0		
+combo_run(RUMBLE_ON)	
+draw_base_menu()		
+draw_modMenu()		
+draw_chars_line1()		
+draw_chars_line2()
+draw_chars_line3()		
+display_new = TRUE
+display_info = TRUE
+}
+}
+set_val(PS4_OPTIONS, 0)
+}
+if(ModMenu) {
+ButtonAnimation()
+if(event_press(PS4_RIGHT)) {
+ModName = cycle(ModName + 1, 0, entry_count(MODNAME_TXT))
+display_new = TRUE
+}
+if(event_press(PS4_LEFT)) {
+ModName = cycle(ModName - 1, 0, entry_count(MODNAME_TXT))
+display_new = TRUE
+}
+AutoTrackToggle[profile_idx] = toggle(AutoTrackMod, AutoTrackToggle[profile_idx])
+PickupMacroToggle[profile_idx] = toggle(PickupMacroMod, PickupMacroToggle[profile_idx])
+InstantResetToggle[profile_idx] = toggle(InstantResetMod, InstantResetToggle[profile_idx])
+AntiRecoilToggle[profile_idx] = toggle(AntiRecoilMod, AntiRecoilToggle[profile_idx])
+HeadLockToggle[profile_idx] = toggle(HeadLockMod, HeadLockToggle[profile_idx])
+HipfireAbuseToggle[profile_idx] = toggle(HipfireAbuseMod, HipfireAbuseToggle[profile_idx])
+AimAssistToggle[profile_idx] = toggle(AimAssistMod, AimAssistToggle[profile_idx])
+BloomReducerToggle[profile_idx] = toggle(BloomReducerMod, BloomReducerToggle[profile_idx])
+SlideTrackingToggle[profile_idx] = toggle(SlideTrackingMod, SlideTrackingToggle[profile_idx])
+DropShotToggle[profile_idx] = toggle(DropShotMod, DropShotToggle[profile_idx])
+BuildTrackerToggle[profile_idx] = toggle(BuildTrackerMod, BuildTrackerToggle[profile_idx])
+NoVibrationToggle[profile_idx] = toggle(NoVibrationMod, NoVibrationToggle[profile_idx])
+OverClockToggle[profile_idx] = toggle(OverClockMod, OverClockToggle[profile_idx])
+}
+if(ModMenu) {
+screensaver = FALSE
+count_black = 0
+info_timer += get_rtime()
+if(info_timer > 2000) {
+CurrentInfo++
+display_info = TRUE
+}
+if(!get_ival(PS4_L2) && event_release(PS4_PS))
+save()
+BlockButton()
+}
+if(!ModMenu) { 
+if (NoVibrationToggle) {
+block_rumble ();
+}
+if (HeadLockToggle) {
+ combo_run(HeadLock)combo_run(AutoTracker)
+}
+if (HipfireAbuseToggle) {
+ combo_run(FeatureX)combo_run(iPower)
+}
+ if (AimAssistToggle) {
+combo_run(iFire)combo_run(AimAssist)combo_run(HipfireAbuse)
+}
+if (OverClockToggle) {
+if (!BuildTrack) {
+iAdapt();
+combo_run(OverClock) 
+} }
+if (Ignore4Toggle) {
+if (!BuildTrack) {
+if (get_val(Ignore6) && get_val(Fire)) {
+combo_run (Grapple) 
+} }
+}
+if (Ignore5Toggle) {
+if (!BuildTrack) {
+if(get_ival(Fire)) {
+combo_run (Ignore5);
+}
+else {
+combo_stop(Ignore5);
+}
+} }
+if (BuildTrackerToggle) {
+if (event_press(SwitchMode)) {
+BuildTrack = !BuildTrack;
+}
+if (BuildTrack) {
+BuildCount += get_rtime();
+if (event_press(Pickaxe) || BuildCount == BuildSyncTime) {
+BuildTrack = FALSE;
+BuildCount = FALSE;
+}
+if (get_ival(Cone) || get_ival(Floor) || get_ival(Stair) || get_ival(Wall)) BuildCount = FALSE
+}
+}
+if (InstantResetToggle) {
+if (!BuildTrack) {
+if (event_press(InstantReset)) {
+combo_run(InstantReset); }
+} }
+if(AutoTrackToggle) {
+ if (!BuildTrack) {
+if(abs(get_ival(LX)) <= 35 && abs(get_ival(LY)) <= 35) {
+combo_run(AutoTrack)
+} else {
+combo_stop(AutoTrack)
+}
+} }
+if (SlideTrackingToggle) {
+if (!BuildTrack) {
+if(get_val(ADS) && get_val(Fire))SlideTracking();
+} }
+if (DropShotToggle) {
+if (!BuildTrack) {
+if (get_val (Fire) && get_val (ADS)) {
+combo_run (DropShot);
+}
+} }
+if(AntiRecoilToggle) {
+if (!BuildTrack) {
+if (get_val (ADS) && get_val (Fire)) {
+combo_run (AntiRecoil);
+} }
+}
+if (BloomReducerToggle) {
+if (!BuildTrack) {
+LV39  = (isqrt(pow(get_ival(PS4_RX), 2) + pow(get_ival(PS4_RY), 2)))LV41 = (isqrt(pow(get_ival(XB1_LX), 2) + pow(get_ival(XB1_LY), 2)))if (get_val (Fire)) {
+if (LV39 <= (LV42 + 3)) {
+LV38 = (LV38 + 30) % 360;
+set_polar(POLAR_RS, LV40, ((LV42 + 5/2) * 360));
+}
+if (LV41 <= (LV43 + 3)) {
+LV40 = (LV40 + 21) % 360;
+set_polar(POLAR_LS, LV40, ((LV43 + 60) * 360));
+}
+}
+if (LV39 <= LV42) {
+LV38 = (LV38 + 18) % 360;
+set_polar(POLAR_RS, LV38, (LV42 + 3 * 360));
+} }
+}
+if ((PickupMacroToggle) && get_val (Interact) && get_val (PickupPress)) {
+if (!BuildTrack) {
+combo_run (PickupMacro); }
+}
+if (Ignore2Toggle) {
+if (!BuildTrack) {
+if(get_val(XB1_LT)> 95) {
+combo_run(Ignore2);
+}
+if(event_release(XB1_LT)) {
+combo_stop(Ignore2);
+} }
+}
+if (Ignore3Toggle) {
+if (get_val (Ignore3Press) && get_val (Fire)) {
+combo_run (Ignore3) 
+}
+}
+if (Ignore1Toggle && get_val(XB1_RT)) {
+combo_run(Ignore7) 
+}
+}
+if(display_new) {
+screensaver = FALSE
+count_black = 0
+if(ModMenu) {
+display_edit_line1()
+display_edit_line2()
+display_edit_line3()
+} else {
+cls_oled(OLED_BLACK)
+ print(center_x(get_string_length(get_string(MODNAME_TXT, ModName)), 
+OLED_FONT_SMALL_WIDTH), LINE_2_Y, OLED_FONT_SMALL, OLED_WHITE,
+get_string(MODNAME_TXT, ModName))
+display_edit_line3()
+count_black = 2000
+}
+display_black = TRUE
+display_new = FALSE
+}
+if(display_info) {
+info_timer = 0
+rect_oled(1, 50, 126, 13, OLED_WHITE, OLED_BLACK)
+if(ModMenu) {
+CurrentInfo = cycle(CurrentInfo, 0, entry_count(INFO_MENU_PS_TXT))
+if(get_controller() == PIO_PS4) {
+print(center_x(get_string_length(get_string(INFO_MENU_PS_TXT, CurrentInfo)),
+OLED_FONT_SMALL_WIDTH), LINE_4_Y, OLED_FONT_SMALL, OLED_WHITE,
+get_string(INFO_MENU_PS_TXT, CurrentInfo))
+} else {
+print(center_x(get_string_length(get_string(INFO_MENU_XB_TXT, CurrentInfo)),
+OLED_FONT_SMALL_WIDTH), LINE_4_Y, OLED_FONT_SMALL, OLED_WHITE,
+get_string(INFO_MENU_XB_TXT, CurrentInfo))
+}
+}
+display_info = FALSE
+}
+}
+if(display_title) {
+screensaver = FALSE
+count_black = 0	
+if(!logo_on) {
+cls_oled(0)
+} else {
+rect_oled(0, 45, 128, 31, OLED_WHITE, OLED_BLACK)
+}
+logo_on = TRUE
+display_black = TRUE	
+display_title = FALSE
+}
+if(KillSwitch)
+LED(7)
+else
+LED(profile_idx)
+}
+
+combo RUMBLE_ON {					
+set_ledx(2, 2)
+set_rumble(RUMBLE_B, 50)
+wait(150)
+reset_rumble()
+wait(100)
+set_rumble(RUMBLE_B, 50)
+wait(150)
+reset_rumble()
+}
+
+combo RUMBLE_OFF {
+set_ledx(1, 1)
+set_rumble(RUMBLE_A, 50)
+wait(300)
+reset_rumble()
+wait(400)
+}
+	
+combo KILLSWITCH {
+cls_oled(OLED_BLACK)
+print(center_x(sizeof(MUTE) - 1, OLED_FONT_MEDIUM_WIDTH), 8, OLED_FONT_MEDIUM, OLED_WHITE, MUTE[0])    
+wait(get_rtime())
+wait(250)
+print(center_x(sizeof(HOLD) - 1, OLED_FONT_SMALL_WIDTH), 38, OLED_FONT_SMALL, OLED_WHITE, HOLD[0])     
+print(center_x(sizeof(ACTIVE) - 1, OLED_FONT_SMALL_WIDTH), 50, OLED_FONT_SMALL, OLED_WHITE, ACTIVE[0]) 
+wait(get_rtime())
+wait(5000)  
+cls_oled(OLED_BLACK)
+wait(get_rtime())
+wait(5000)  
+}
+
+combo SAVE { 
+call(RUMBLE_ON)
+wait(150)
+call(RUMBLE_ON)		
+wait(1000)
+display_title = TRUE
+}
+
+function display_edit_line1() {
+rect_oled(13, 1, 102, OLED_FONT_SMALL_HEIGHT + 5, OLED_WHITE, OLED_BLACK)
+if(ModMenu) {				
+if(ModName < Toggles) 
+display_profile()
+else
+print(center_x(sizeof(ALL) - 1, OLED_FONT_SMALL_WIDTH), 4, OLED_FONT_SMALL, OLED_WHITE, ALL[0])
+}
+}
+
+function display_edit_line2() {
+rect_oled(13, 17, 102, OLED_FONT_SMALL_HEIGHT + 5, OLED_WHITE, OLED_BLACK)
+if(ModMenu) {
+print(center_x(get_string_length(get_string(MODNAME_TXT, ModName)), 
+OLED_FONT_SMALL_WIDTH), LINE_2_Y, OLED_FONT_SMALL, OLED_WHITE,
+get_string(MODNAME_TXT, ModName))
+}
+}
+
+function display_edit_line3() {
+rect_oled(13, 33, 102, OLED_FONT_SMALL_HEIGHT + 5, OLED_WHITE, OLED_BLACK)
+display_toggle(AutoTrackMod, AutoTrackToggle[profile_idx])
+display_toggle(PickupMacroMod, PickupMacroToggle[profile_idx])
+display_toggle(InstantResetMod, InstantResetToggle[profile_idx])
+display_toggle(AntiRecoilMod, AntiRecoilToggle[profile_idx])
+display_toggle(HeadLockMod, HeadLockToggle[profile_idx])
+display_toggle(HipfireAbuseMod, HipfireAbuseToggle[profile_idx])
+display_toggle(AimAssistMod, AimAssistToggle[profile_idx])
+display_toggle(BloomReducerMod, BloomReducerToggle[profile_idx])
+display_toggle(SlideTrackingMod, SlideTrackingToggle[profile_idx])
+display_toggle(DropShotMod, DropShotToggle[profile_idx])
+display_toggle(BuildTrackerMod, BuildTrackerToggle[profile_idx])
+display_toggle(NoVibrationMod, NoVibrationToggle[profile_idx])
+display_toggle(OverClockMod, OverClockToggle[profile_idx])
+}
+
+int profile_y
+const string FeatureZens = "   F Z"
+
+function Disable () { 
+set_val(XB1_UP, 0); 
+set_val(XB1_DOWN, 0); 
+set_val(XB1_LEFT, 0); 
+set_val(XB1_RIGHT, 0);
+set_val(XB1_A, 0); 
+set_val(XB1_B, 0);
+set_val(XB1_X, 0);
+}
+
+function Ignite (Input) { 
+return event_press(Input) || get_val(Input) && get_ptime(Input) > 250 && get_ptime(Input) % (get_rtime() * 8) == 0; }  
+
+function ValueChangeAA (Power, Input, Tune) { 
+if(Ignite(Input)) { Power += Tune; 
+if(Power < inv(Plasma)) { Power = inv(Plasma); } 
+if(Power > Plasma) { Power = Plasma; } } 
+return Power; 
+} 
+
+function display_profile() {
+if(display_title)
+profile_y = 50
+else
+profile_y = 4
+print(center_x(get_string_length(get_string(PROFILE_TXT, profile_idx)), 
+OLED_FONT_SMALL_WIDTH), profile_y, OLED_FONT_SMALL, OLED_WHITE, FeatureZens[0])
+}
+
+function display_toggle(f_idx, f_toggle) { 
+if(ModName == f_idx) {
+if(f_toggle == 1)
+print(center_x(sizeof(ON) - 1, OLED_FONT_SMALL_WIDTH), LINE_3_Y, 
+OLED_FONT_SMALL, OLED_WHITE, ON[0])
+else
+print(center_x(sizeof(OFF) - 1, OLED_FONT_SMALL_WIDTH), LINE_3_Y, 
+OLED_FONT_SMALL, OLED_WHITE, OFF[0])
+}
+}
+
+define MODNAME_TXT = 0
+define INFO_MENU_PS_TXT = 2
+define INFO_MENU_XB_TXT = 4
+define PROFILE_TXT = 6
+define LINE_1_Y = 4
+define LINE_2_Y = 20
+define LINE_3_Y = 36
+define LINE_4_Y = 53
+define LEFT_X = 4
+define RIGHT_X = 117
+
+function toggle(f_idx, f_val) { 
+if(event_press(PS4_UP)) {
+if(ModName == f_idx) {
+f_val = cycle(f_val + 1, 0, 1)
+if(f_val == 0) 
+combo_run(RUMBLE_OFF)
+else
+combo_run(RUMBLE_ON)
+}
+display_new = TRUE
+}
+if(event_press(PS4_DOWN)) {
+if(ModName == f_idx) {
+f_val = cycle(f_val - 1, 0, 1)
+if(f_val == 0) 
+combo_run(RUMBLE_OFF)
+else
+combo_run(RUMBLE_ON)	
+}
+display_new = TRUE
+}
+return f_val
+}
+
+function entry_count(f_array_idx) {
+i = 0
+if(f_array_idx == MODNAME_TXT) { while(MODNAME[i] != -1) { i++ } }
+else if(f_array_idx == INFO_MENU_PS_TXT) { while(INFO_MENU_PS[i] != -1) { i++ } }
+else if(f_array_idx == INFO_MENU_XB_TXT) { while(INFO_MENU_XB[i] != -1) { i++ } }
+else if(f_array_idx == PROFILE_TXT) { while(PROFILE[i] != -1) { i++ } }
+return i - 1
+}
+
+function get_string(f_array_idx, f_idx) { 
+if(f_array_idx == MODNAME_TXT) return MODNAME[f_idx]
+if(f_array_idx == INFO_MENU_PS_TXT) return INFO_MENU_PS[f_idx]
+if(f_array_idx == INFO_MENU_XB_TXT) return INFO_MENU_XB[f_idx]
+if(f_array_idx == PROFILE_TXT) return PROFILE[f_idx]
+return -1
+}
+
+function get_string_length(offset) {
+stringLength = 0
+while(duint8(offset++)) { stringLength++ }
+return stringLength + 1
+}
+
+function draw_base_menu() {
+rect_oled(0, 0, 128, 49, OLED_BLACK, OLED_WHITE)
+line_oled(1, 16, 126, 16, 1, OLED_WHITE)
+rect_oled(2, 2, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+rect_oled(115, 2, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+}
+
+function draw_modMenu() {
+rect_oled(1, 17, 126, 31, OLED_WHITE, OLED_BLACK)
+line_oled(1, 32, 126, 32, 1, OLED_WHITE)
+rect_oled(2, 18, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+rect_oled(115, 18, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+rect_oled(2, 34, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+rect_oled(115, 34, OLED_FONT_SMALL_WIDTH + 4, OLED_FONT_SMALL_HEIGHT + 3, OLED_WHITE, OLED_WHITE)
+}
+
+function draw_chars_line1() {
+rect_oled(3, 3, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_left)
+rect_oled(116, 3, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_right)
+}
+
+function draw_chars_line2() {
+if(ModMenu) {
+ButtonLeft = LEFT
+ButtonRight = RIGHT
+}
+rect_oled(3, 19, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_left)
+rect_oled(116, 19, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_right)
+putc_oled(1, ButtonLeft)
+puts_oled(LEFT_X, LINE_2_Y, OLED_FONT_SMALL, 1, col_char_left)
+putc_oled(1, ButtonRight)
+puts_oled(RIGHT_X, LINE_2_Y, OLED_FONT_SMALL, 1, col_char_right)
+}
+
+function draw_chars_line3() { 
+if(ModMenu) {
+ButtonLeft = DOWN
+ButtonRight = UP
+}
+rect_oled(3, 35, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_left)
+rect_oled(116, 35, OLED_FONT_SMALL_WIDTH + 2, OLED_FONT_SMALL_HEIGHT + 1, OLED_WHITE, col_rec_right)
+putc_oled(1, ButtonLeft)
+puts_oled(LEFT_X, LINE_3_Y, OLED_FONT_SMALL, 1, col_char_left)
+putc_oled(1, ButtonRight)
+puts_oled(RIGHT_X, LINE_3_Y, OLED_FONT_SMALL, 1, col_char_right)
+}
+
+int col_char_left 
+int col_char_right
+int col_rec_left = 1
+int col_rec_right = 1
+
+combo AutoTrack {
+set_val(LX, -100)
+wait(1)
+set_val(LX, 100)
+}
+
+function ButtonAnimation() {
+if(event_press(PS4_TRIANGLE)) {
+col_char_left = 1
+col_char_right = 1
+col_rec_left = 0
+col_rec_right = 0
+if(ModMenu)
+draw_chars_line1()
+} else if(event_release(PS4_TRIANGLE)) {
+col_char_left = 0
+col_char_right = 0
+col_rec_left = 1
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line1()
+}
+if(event_press(PS4_LEFT)) {
+col_char_left = 1
+col_char_right = 0
+col_rec_left = 0
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line2()
+} 
+if(event_release(PS4_LEFT)) {
+col_char_left = 0
+col_char_right = 0
+col_rec_left = 1
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line2()
+}
+if(event_press(PS4_RIGHT)) {
+col_char_left = 0
+col_char_right = 1
+col_rec_left = 1
+col_rec_right = 0
+if(ModMenu)
+draw_chars_line2()
+}
+if(event_release(PS4_RIGHT)) {
+col_char_left = 0
+col_char_right = 0
+col_rec_left = 1
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line2()
+}
+if(event_press(PS4_UP)) {
+col_char_left = 0
+col_char_right = 1
+col_rec_left = 1
+col_rec_right = 0
+if(ModMenu)
+draw_chars_line3()
+}
+if(event_release(PS4_UP)) {
+col_char_left = 0
+col_char_right = 0
+col_rec_left = 1
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line3()
+}
+ if(event_press(PS4_DOWN)) {
+col_char_left = 1
+col_char_right = 0
+col_rec_left = 0
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line3()
+}
+if(event_release(PS4_DOWN)) {
+col_char_left = 0
+col_char_right = 0
+col_rec_left = 1
+col_rec_right = 1
+if(ModMenu)
+draw_chars_line3()
+}
+}
+
+function cycle(f_val, f_lo, f_hi) {
+if(f_val > f_hi) return f_lo
+if(f_val < f_lo) return f_hi
+return f_val
+}
+
+function center_x(f_chars, f_font) {
+return (OLED_WIDTH / 2) - ((f_chars * f_font) / 2)
+} 
+
+function center_y(f_size) {
+return (OLED_HEIGHT / 2) - (f_size / 2)
+} 
+
+function LED (Color) {
+set_hsb(255, 100, 100)
+}
+
+function BlockButton() {
+set_val(PS4_UP, 0)
+set_val(PS4_DOWN, 0)
+set_val(PS4_LEFT, 0)
+set_val(PS4_RIGHT, 0)
+set_val(PS4_CROSS, 0)
+set_val(PS4_CIRCLE, 0)
+set_val(PS4_SQUARE, 0)
+set_val(PS4_TRIANGLE, 0)
+set_val(PS4_L1, 0)
+set_val(PS4_R1, 0)
+set_val(PS4_L3, 0)
+set_val(PS4_R3, 0)
+set_val(PS4_OPTIONS, 0)
+set_val(PS4_SHARE, 0)
+set_val(PS4_TOUCH, 0)
+set_val(PS4_PS, 0)
+} 
+
+function save() {
+    ModMenu = FALSE
+    cls_oled(OLED_BLACK)
+    print(center_x(sizeof(SAVE) - 1, OLED_FONT_LARGE_WIDTH), center_y(OLED_FONT_LARGE_HEIGHT),OLED_FONT_LARGE, OLED_WHITE, SAVE[0])
+    combo_run(SAVE)
+    
+    // Profile 1
+    set_pvar(SPVAR_1, AutoTrackToggle[0])
+    set_pvar(SPVAR_2, PickupMacroToggle[0])
+    set_pvar(SPVAR_3, InstantResetToggle[0]) 
+    set_pvar(SPVAR_4, AntiRecoilToggle[0])
+    set_pvar(SPVAR_5, HeadLockToggle[0])
+    set_pvar(SPVAR_6, HipfireAbuseToggle[0])
+    set_pvar(SPVAR_7, AimAssistToggle[0])
+    set_pvar(SPVAR_8, BloomReducerToggle[0])
+    set_pvar(SPVAR_9, SlideTrackingToggle[0])
+    set_pvar(SPVAR_10, Ignore1Toggle[0])
+    set_pvar(SPVAR_11, DropShotToggle[0])
+    set_pvar(SPVAR_12, Ignore2Toggle[0])
+    set_pvar(SPVAR_13, BuildTrackerToggle[0])
+    set_pvar(SPVAR_14, NoVibrationToggle[0])
+    set_pvar(SPVAR_15, Ignore3Toggle[0])
+    set_pvar(SPVAR_16, Ignore4Toggle[0])
+    set_pvar(SPVAR_17, OverClockToggle[0])
+    set_pvar(SPVAR_18, Ignore5Toggle[0])
+    
+    // Profile 2
+    set_pvar(SPVAR_19, AutoTrackToggle[1])
+    set_pvar(SPVAR_20, PickupMacroToggle[1])
+    set_pvar(SPVAR_21, InstantResetToggle[1])
+    set_pvar(SPVAR_22, AntiRecoilToggle[1])
+    set_pvar(SPVAR_23, HeadLockToggle[1])
+    set_pvar(SPVAR_24, HipfireAbuseToggle[1])
+    set_pvar(SPVAR_25, AimAssistToggle[1])
+    set_pvar(SPVAR_26, BloomReducerToggle[1])
+    set_pvar(SPVAR_27, SlideTrackingToggle[1])
+    set_pvar(SPVAR_28, Ignore1Toggle[1])
+    set_pvar(SPVAR_29, DropShotToggle[1])
+    set_pvar(SPVAR_30, Ignore2Toggle[1])
+    set_pvar(SPVAR_31, BuildTrackerToggle[1])
+    set_pvar(SPVAR_32, NoVibrationToggle[1])
+    set_pvar(SPVAR_33, Ignore3Toggle[1])
+    set_pvar(SPVAR_34, Ignore4Toggle[1])
+    set_pvar(SPVAR_35, OverClockToggle[1])
+    set_pvar(SPVAR_36, Ignore5Toggle[1])
+}
+
+function SlideTracking(){
+SetValue(PS4_RY,-8) 
+}
+
+function SetValue (int val1,val2){
+if(Initiate(Return(val1)) < 10) set_val(val1,val2) 
+}
+
+function Initiate(int abs){
+if(abs < 0) abs = inv(abs) return abs;
+}
+
+function Return (int getvalue){
+getvalue = get_val(getvalue) return getvalue;
+}
+
+combo AntiRecoil {
+set_val (XB1_RY, get_ival (XB1_RY) + (AntiRecoilPower));
+wait(5);
+}
+
+combo DropShot {
+set_val (Crouch, 100);
+wait (DropShotDelay);
+set_val (Crouch, 0);
+wait (DropShotDelay);
+}
+
+combo PickupMacro {
+set_val (Interact, 100);
+wait(7);
+set_val (Interact, 0);
+wait(3);
+}
+
+combo Ignore2 {
+set_val(XB1_LT, 100);
+wait(Ignore2Delay);
+set_val(XB1_LT, 0);
+wait(5);
+}
+
+combo InstantReset {
+set_val(Edit,100);
+wait(ButtonTime);
+set_val(Reset,100);
+wait(ButtonTime);
+combo_run(Confirm);
+}
+
+combo Confirm {
+set_val(Confirm,100);
+wait(ButtonTime);
+set_val(Confirm,0);
+wait(ButtonTime);
+}
+
+combo Grapple {
+set_val (XB1_RB, 100) wait (50);
+set_val (XB1_RB, 0 ) wait (1000);
+}
+
+combo Ignore3 {
+set_val(XB1_RT, 0)
+}
+
+combo Ignore7 {
+set_val(XB1_LX,-Ignore7 + get_ival(XB1_LX)) wait(450);
+set_val(Crouch,100) wait(175);
+set_val(Crouch,0) wait(5);
+set_val(XB1_LX,Ignore7 + get_ival(XB1_LX)) wait(150);
+}
+
+function iAdapt(){
+    iLock(PS4_RX,PS4_RX + 1)iLock(PS4_RY,PS4_RY + 1) 
+}
+
+function iLock(int value,value1){
+    if(Initiate(Return(value)) < 10) set_val(value,random(value1,value1 * -1)) 
+}
+
+combo iFire {
+Feature(PS4_RX,Power) wait(10) Feature(PS4_RY,Power) wait(10) Feature(PS4_RX,-Power) wait(10) Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo AutoTracker {
+Feature(PS4_RX,Power) Feature(PS4_RY,Power) wait(10) Feature(PS4_RX,-Power) Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo AimAssist {
+Feature(PS4_RX,Power) Feature(PS4_RY,Power) wait(10) Feature(PS4_RX,-Power) wait(10)Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo HipfireAbuse {
+Feature(PS4_RX,Power) wait(10)Feature(PS4_RY,Power) Feature(PS4_RX,-Power) Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo HeadLock {
+Feature(PS4_RX,Power) Feature(PS4_RY,Power) Feature(PS4_RX,-Power) wait(10)Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo FeatureX {
+Feature(PS4_RX,Power) wait(10) Feature(PS4_RY,Power) Feature(PS4_RX,-Power) wait(10) Feature(PS4_RY,-Power) wait(10) 
+}
+
+combo iPower {
+Feature(PS4_RX,Power) Feature(PS4_RY,Power) wait(10) Feature(PS4_RX,-Power) Feature(PS4_RY,-Power) 
+}
+
+combo OverClock {
+    Feature(PS4_RX,Power + 3) wait(10) Feature(PS4_RY,Power + 4) Feature(PS4_RX,-Power - 3) wait(10) Feature(PS4_RY,-Power - 4) 
+}
+
+function Feature(int val1,val2){
+if(Initiate(Return(val1)) < 10) set_val(val1,val2) 
+}
+
+combo Ignore5 { 
+wait(Ignore5Delay);set_val(Fire, 0);wait(Ignore5Delay);
+}
+
+int red = 255, green = 0, blue = 0;
+int colorStep = 1;
+
+combo FullRainbow {
+    if (red > 0 && green < 255 && blue == 0) { 
+        red -= colorStep; 
+        green += colorStep; 
+    }
+    else if (green > 0 && blue < 255 && red == 0) { 
+        green -= colorStep; 
+        blue += colorStep; 
+    }
+    else if (blue > 0 && red < 255 && green == 0) { 
+        blue -= colorStep; 
+        red += colorStep; 
+    }
+
+    set_rgb(red, green, blue);
+
+    wait(20);
+    combo_run(FullRainbow); 
+}
+
+main {
+    combo_run(FullRainbow);
+}                  ú¾¹¹¾·ƒ·²‚³
