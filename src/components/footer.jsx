@@ -111,19 +111,7 @@ const Footer = () => {
               </p>
             </div>
           </a>
-          <Link
-            href="https://audens.ar"
-            target="_blank"
-            className="flex items-center max-sm:mt-2 sm:ml-4 sm:flex-row flex-col gap-1 hover:cursor-pointer"
-          >
-            <p className="text-sm text-gray-300 text-center">Developed by</p>
-            <Image
-              alt="Audens Solutions"
-              src="https://audens.ar/brand/text-logo-white.png"
-              width={100}
-              height={10}
-            />
-          </Link>
+          
           <span className="inline-flex items-center gap-3 sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
             <a
               href="https://www.tiktok.com/@berlingonzalezz"

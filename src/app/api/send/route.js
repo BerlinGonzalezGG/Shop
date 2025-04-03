@@ -25,7 +25,7 @@ export async function POST(request) {
 export async function sendEmail(body){
   try {
     const emailDetails = {
-      from: 'Berlin Gonzalez Shop <berlin@tendencias.tech>',
+      from: 'Berlin Gonzalez Shop <support@berlingonzalez.gg>',
       to: body.type === 'admin' ? 'berlingonzalezshop@gmail.com' : body.order.shipping.email,
       subject: body.type === 'admin' ? 'New payment confirmed' : 'Payment confirmed',
       react: body.type === 'admin' ? adminPaymentConfirmed(body.order) : userPaymentConfirmed(body.order),

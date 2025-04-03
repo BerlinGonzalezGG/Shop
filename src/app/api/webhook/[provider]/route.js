@@ -240,7 +240,7 @@ async function handleFiles(order) {
     };
 
     const emailDetails = {
-      from: 'Berlin Gonzalez Shop <berlin@tendencias.tech>',
+      from: 'Berlin Gonzalez Shop <support@berlingonzalez.gg>',
       to: order.shipping.email,
       subject: "Your file is ready",
       react: userPaymentConfirmed(order),
