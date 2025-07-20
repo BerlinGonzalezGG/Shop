@@ -4,14 +4,28 @@ import User from "@/lib/models/user";
 import { NextResponse } from "next/server";
 
 export const authenticate = async (request) => {
+  // Primero intentar autenticación WordPress
+  if (request) {
+    try {
+      const body = await request.json();
+      const wpToken = body.wpToken || request.headers.get('x-wp-token');
+      
+      if (wpToken === process.env.WORDPRESS_API_TOKEN) {
+        return { session: { wordpress: true } }; // Autenticación WordPress exitosa
+      }
+    } catch (error) {
+      // Si falla parsing JSON, continuar con NextAuth
+    }
+  }
+
+  // Autenticación NextAuth normal
   const session = await getServerSession(authOptions);
   if (!session) {
     return { error: "Unauthorized", status: 401 };
   }
-
+  
   try {
     const user = await User.findOne({ email: session.user.email });
-
     if (!user || user.role !== 'admin') {
       return { error: "Unauthorized", status: 401 };
     }
@@ -20,6 +34,3 @@ export const authenticate = async (request) => {
     return { error: "Unauthorized", status: 401 };
   }
 };
-
-
-
