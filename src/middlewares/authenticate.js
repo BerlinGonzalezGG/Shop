@@ -7,10 +7,9 @@ export const authenticate = async (request) => {
   // Primero intentar autenticación WordPress
   if (request) {
     try {
-      const body = await request.json();
-      const wpToken = body.wpToken || request.headers.get('x-wp-token');
+      const body = await request.clone().json(); // Clone request to avoid consumption
       
-      if (wpToken === process.env.WORDPRESS_API_TOKEN) {
+      if (body.wpToken && body.wpToken === process.env.WORDPRESS_API_TOKEN) {
         return { session: { wordpress: true } }; // Autenticación WordPress exitosa
       }
     } catch (error) {
